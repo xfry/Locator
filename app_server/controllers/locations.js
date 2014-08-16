@@ -1,7 +1,7 @@
 //app_server/controllers/locations.js
 
 module.exports.homeList = function(req, res) {
-  res.render('index', {title: 'Inicio'});
+  res.render('locations-list', {title: 'Inicio'});
 }
 
 module.exports.locationInfo = function(req, res) {
