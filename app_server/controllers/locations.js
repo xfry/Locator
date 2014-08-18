@@ -5,9 +5,9 @@ module.exports.homeList = function(req, res) {
 }
 
 module.exports.locationInfo = function(req, res) {
-  res.render('index', {title: 'Información de Ubucación'});
+  res.render('location-info', {title: 'Información de Ubucación'});
 }
 
 module.exports.addReview = function(req, res) {
-  res.render('index', {title: 'Agregar sugerencia'});
+  res.render('location-review-form', {title: 'Agregar Analisis'});
 }
