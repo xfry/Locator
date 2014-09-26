@@ -1,27 +1,29 @@
 extends layout
 
+include _includes/sharedHTMLfunctions
+
 block content
   .row.page-header
     .col-lg-12
-      h1 Juan Valdez
+      h1 #{pageHeader.title}
   .row
     .col-xs-12.col-md-9
       .row
         .col-xs-12.col-md-6
           p.rating
-            span.glyphicon.glyphicon-star
-            span.glyphicon.glyphicon-star
-            span.glyphicon.glyphicon-star
-            span.glyphicon.glyphicon-star-empty
-            span.glyphicon.glyphicon-star-empty
+            +outputRating(location.rating)
           p Calle 125, Medellin
           .panel.panel-primary
             .panel-heading
-              h2.panle-title Hora de apertura
+              h2.panel-title Hora de apertura
             .panel-body
-              p Lunes - Viernes: 7:00am - 7:00pm
-              p Sabados: 8:00am - 5:00pm
-              p Domingos: Cerrado
+              each time in location.openingTimes
+                p
+                  | #{time.days} : 
+                  if time.closed
+                    | cerrado
+                  else
+                    | #{time.opening} - #{time.closing}
           .panel.panel-primary
             .panel-heading
               h2.panel-title Facilidades
@@ -43,7 +45,7 @@ block content
             .panel-heading
               h2.panel-title Mapa de Ubicacion
             .panel-body
-              img.img-responsive.img-rounded(src='http://maps.googleapis.com/maps/api/staticmap?center=51.455041,-0.9690884&zoom=17&size=400x350&sensor=false&markers=51.455041,-0.9690884&scale=2')
+              img.img-responsive.img-rounded(src="http://maps.googleapis.com/maps/api/staticmap?center=#{location.coords.lat},#{location.coords.lng}&zoom=17&size=400x350&sensor=false&markers=#{location.coords.lat},#{location.coords.lng}&scale=2")
       .row
         .col-xs-12
           .panel.panel-primary.review-panel
@@ -53,29 +55,14 @@ block content
               h2.panel-title Analisis de Clientes
             .panel-body.review-container
               .row
-                .review
-                  .well.well-ms.review-header
-                    span.rating
-                      span.glyphicon.glyphicon-star
-                      span.glyphicon.glyphicon-star
-                      span.glyphicon.glyphicon-star
-                      span.glyphicon.glyphicon-star
-                      span.glyphicon.glyphicon-star
-                    span.reviewAuthor Fredy Andrade
-                    small.reviewTimestamp 18 de Agosto 2013
-                  .col-xs-12
-                    p Maunifica animas meas! Que gran lugar
-                .review
-                  .well.well-ms.review-header
-                    span.rating
-                      span.glyphicon.glyphicon-star
-                      span.glyphicon.glyphicon-star
-                      span.glyphicon.glyphicon-star
-                      span.glyphicon.glyphicon-star-empty
-                      span.glyphicon.glyphicon-star-empty
-                    span.reviewAuthor Raizza Cujar
-                    small.reviewTimestamp 11 de Noviembre 2014
-                  .col-xs-12
-                    p Disfrute de un muy buen  cafe con mi novio :D
+                each review in location.reviews
+                  .review
+                    .well.well-ms.review-header
+                      span.rating
+                        +outputRating(review.rating)
+                      span.reviewAuthor #{review.author}
+                      small.reviewTimestamp #{review.timestamp}
+                    .col-xs-12
+                      p !{review.reviewText}
     .col-xs-12.col-md-3
-      p.lead El cafe de Juan valdes esta en Locator porque es un lugar con acceso a wifi y espacio comodo para los visitantes setarse y disfrutar
+      p.lead #{callToAction}
