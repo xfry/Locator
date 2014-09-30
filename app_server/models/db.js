@@ -16,7 +16,12 @@ if(process.platform === "win32"){
 
 //direccion de la base de datos bdURI
 var dbURI = 'mongodb://localhost/Locator';
+//verificar si es produccion o desarrollo
+if(process.env.NODE_ENV === 'production'){
+  dbURI = process.env.MONGOLAB_URI;
+}
 mongoose.connect(dbURI);//conectando a la aplicacion
+
 
 mongoose.connection.on('connected', function(){
   console.log('Mongoose esta conectado en: ' + dbURI);
