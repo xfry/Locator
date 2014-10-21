@@ -12,7 +12,7 @@ var openingTimeSchema = new mongoose.Schema({
 });
 //agregando esquema de calificaciones
 var reviewSchema = new mongoose.Schema({
-  ahthor: {
+  author: {
     displayName: String,
   },
   rating: {type: Number, "default": 0, min: 0, max: 5},
@@ -25,7 +25,7 @@ var locationSchema = new mongoose.Schema({
   address: String,
   rating: {type: Number, "default": 0, min: 0, max: 5},
   facilities: [String],
-  coords: {type: [Number], index: '2dsphere'},
+  coords: {type: [Number], index: '2dsphere', required: true},
   openingTimes: [openingTimeSchema],
   reviews: [reviewSchema],
 });
@@ -36,3 +36,4 @@ var locationSchema = new mongoose.Schema({
 //=================================================
 
 mongoose.model('Location', locationSchema);
+mongoose.model('Review', reviewSchema);

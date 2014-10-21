@@ -1,11 +1,14 @@
 var express = require('express');
+var methodOverride = require('method-override');
 var path = require('path');
 var favicon = require('static-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var router = express.Router();
-require("./app_server/models/db");
+require("./app_api/models/db");
+require('./routes')(router);
+require('./app_api/routes')(router);
 
 var app = express();
 
@@ -17,14 +20,12 @@ app.use(favicon());
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
+app.use(methodOverride());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-require('./routes')(router);
-require('./app_api/routes')(router);
 app.use('/', router);
 app.use('/api', router);
-
 
 /// catch 404 and forwarding to error handler
 app.use(function(req, res, next) {

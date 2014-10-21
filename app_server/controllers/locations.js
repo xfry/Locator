@@ -1,6 +1,15 @@
 //app_server/controllers/locations.js
+var request = require('request');
 
-module.exports.homeList = function(req, res) {
+var apiOptions = {
+  server: "http://localhost:3000"
+};
+
+if(process.NODE_ENV === 'production') {
+  apiOptions.server = "http://stark-springs-3239.herokuapp.com/";
+}
+//mostrar datos en home
+var renderHomepage = function(req, res, responseBody) {
   res.render('locations-list', {
     title: 'Locator, consigue un lugar con Wi-Fi',
     pageHeader: {
@@ -8,27 +17,45 @@ module.exports.homeList = function(req, res) {
       strapLine: 'Encuentra un lugar con Wi-Fi a tu alrededor'
     },
     sidebar: "Buscar lugares con wifi? locator te ayuda a encontrar estos lugares, ademas de cafeterias, galleterias, heladerias, dejanos ayudarte y escribe lo que estas buscando",
-    locations: [{
-      name: 'Juan Valdez',
-      address: 'Medellin, calle 10 #47-22',
-      rating: 3,
-      facilities: ['Bares', 'Restaurantes', 'Wi-fi'],
-      distance: '100m'
-    },{
-      name: 'Mariana Food',
-      address: 'Medellin, cra 40 #47-54',
-      rating: 4,
-      facilities: ['Bares', 'Restaurantes', 'Wi-fi'],
-      distance: '200m'
-    },{
-      name: 'Tuchis',
-      address: 'Medellin, cra 41 #48-55',
-      rating: 4,
-      facilities: ['Bares', 'Restaurantes', 'Wi-fi'],
-      distance: '250m'
-    }]
+    locations: responseBody
   });
-}
+};
+
+module.exports.homeList = function(req, res) {
+  var requestOptions, path;
+  path = "/api/locations";
+  requestOptions = {
+    url: apiOptions.server + path,
+    method : "GET",
+    json : {},
+    qs : {
+      lng : -0.7992599,
+      lat : 51.378091,
+      maxDistance : 20
+    }
+  };
+
+  request(requestOptions, function (err, response, body) {
+    var i, data;
+    data = body;
+    for (i = 0; i < data.length; i++) {
+      data[i].distance = _formatDistance(data[i].distance);
+    }
+    renderHomepage(req,res, data);
+  });
+
+  var _formatDistance = function (distance) {
+    var numDistance, unit;
+    if (distance > 1) {
+      numDistance = parseFloat(distance).toFixed(1);
+      unit = 'Km';
+    } else {
+      numDistance = parseInt(distance * 1000, 10);
+      unit = 'm';
+    }
+    return numDistance + unit;
+  };
+};
 
 module.exports.locationInfo = function(req, res) {
   res.render('location-info', {
