@@ -10,17 +10,18 @@ block content
           small  #{pageHeader.strapLine}
   .row
     .col-xs-12.col-sm-8
-      .row.list-group
-        each location in locations  
-          .col-xs-12.list-group-item
-            h4
-              a(href="/location") #{location.name} 
-              small &nbsp
-                +outputRating(location.rating)
-              span.badge.pull-right.badge-default #{location.distance}
-            p.address #{location.address}
-            p
-              each facilitie in location.facilities
-                span.label.label-warning | #{facilitie} |
+      .error= message
+        .row.list-group
+          each location in locations  
+            .col-xs-12.list-group-item
+              h4
+                a(href="/location") #{location.name} 
+                small &nbsp
+                  +outputRating(location.rating)
+                span.badge.pull-right.badge-default #{location.distance}
+              p.address #{location.address}
+              p
+                each facilitie in location.facilities
+                  span.label.label-warning | #{facilitie} |
     .col-xs-12.col-sm-4
       p.lead #{sidebar}

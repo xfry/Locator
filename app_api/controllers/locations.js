@@ -68,7 +68,7 @@ module.exports.locationsListByDistance = function (req, res){
     maxDistance: theEarth.getRadsfromDistance(20),
     num: 10
   }
-  if(!lng || !lat){
+  if((!lng && lng!==0) || (!lat && lat!==0)){
     sendJSONresponse(res, 404, {
       "message": "los parametros lng y lat son requeridos en la url"
     });

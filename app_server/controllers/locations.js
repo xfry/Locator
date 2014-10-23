@@ -10,6 +10,15 @@ if(process.NODE_ENV === 'production') {
 }
 //mostrar datos en home
 var renderHomepage = function(req, res, responseBody) {
+  var message;
+  if (!(responseBody instanceof Array)) {
+    massage = "Error de busqueda en API";
+    responseBody = [];   
+  } else {
+    if (!responseBody.length) {
+      message = "No se encontraron lugares cercanos";
+    }
+  }
   res.render('locations-list', {
     title: 'Locator, consigue un lugar con Wi-Fi',
     pageHeader: {
@@ -17,7 +26,8 @@ var renderHomepage = function(req, res, responseBody) {
       strapLine: 'Encuentra un lugar con Wi-Fi a tu alrededor'
     },
     sidebar: "Buscar lugares con wifi? locator te ayuda a encontrar estos lugares, ademas de cafeterias, galleterias, heladerias, dejanos ayudarte y escribe lo que estas buscando",
-    locations: responseBody
+    locations: responseBody,
+    message: message
   });
 };
 
@@ -29,19 +39,28 @@ module.exports.homeList = function(req, res) {
     method : "GET",
     json : {},
     qs : {
-      lng : -0.7992599,
-      lat : 51.378091,
-      maxDistance : 20
+      /*lng : 0,
+      lat : 0,*/
+      /*lng : -0.7992599,
+      lat : 51.378091,*/
+      maxDistance : 0.200
     }
   };
 
   request(requestOptions, function (err, response, body) {
     var i, data;
     data = body;
-    for (i = 0; i < data.length; i++) {
-      data[i].distance = _formatDistance(data[i].distance);
+    console.log(response.statusCode);
+    if (response.statusCode === 200 && data.length) {
+      for (i = 0; i < data.length; i++) {
+        data[i].distance = _formatDistance(data[i].distance);
+      }
     }
-    renderHomepage(req,res, data);
+    if (response.statusCode === 404) {
+      renderHomepage(req, res, data);
+      return;
+    }
+    renderHomepage(req, res, data);
   });
 
   var _formatDistance = function (distance) {
